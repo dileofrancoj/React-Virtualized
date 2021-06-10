@@ -1,23 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import faker from "faker";
+
+import "./App.css";
+import { useEffect, useState } from "react";
+import NoVirtualized from "./NoVirtualized";
+import Virtualized from "./Virtualized";
 
 function App() {
+  const [people, setPeople] = useState([]);
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => {
+    setPeople(
+      [...Array(100).keys()].map((key) => {
+        return {
+          id: key,
+          name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+          bio: faker.lorem.lines(Math.random() * 100),
+        };
+      })
+    );
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>{time.toISOString()}</h1>
+      <Virtualized people={people} />
+      {/* <NoVirtualized  people={people} /> */}
     </div>
   );
 }
